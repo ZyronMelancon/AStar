@@ -7,10 +7,10 @@ from graph import Node
 class DrawableNode(object):
     '''drawable node'''
 
-    def __init__(self, graphnode):
+    def __init__(self, inpos):
         # astar vars
-        posx = graphnode.value[0]
-        posy = graphnode.value[1]
+        self.posx = inpos[0]
+        self.posy = inpos[1]
         self.adjacents = []
         self.parent = None
         self._walkable = True
@@ -23,10 +23,10 @@ class DrawableNode(object):
         self.width = SIZE
         self.height = SIZE
         self.id = id
-        self.index = (posx, posy)
-        self.x = (5 + self.width) * posx + 5
-        self.y = (5 + self.height) * posy + 5
-        self.pos = (self.width * posx, self.height * posy)
+        self.index = (self.posx, self.posy)
+        self.x = (5 + self.width) * self.posx + 5
+        self.y = (5 + self.height) * self.posy + 5
+        self.pos = (self.width * self.posx, self.height * self.posy)
         self.screenpos = (self.x, self.y)
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.surface = pygame.Surface((self.width, self.height))
@@ -101,6 +101,7 @@ class DrawableNode(object):
             ids += " " + str(i.id)
         print("neighbors:", ids)
         print("index: ", self.index)
+        
 
     def draw(self, screen, font, init=True, text=True):
         # pygame.draw.rect(screen, self._color, self.rect)
@@ -120,7 +121,6 @@ class DrawableNode(object):
             # set it's position/parent
             textfpos = (self.x, self.y)  # top left
             textgpos = (self.x, self.y + self.height - 10)  # bot left
-
             # center it
 
             # draw the square
