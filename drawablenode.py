@@ -31,7 +31,7 @@ class DrawableNode(object):
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.surface = pygame.Surface((self.width, self.height))
         self.dirty = False
-        self._color =  (125, 255, 255)
+        self._color =  (0, 0, 0)
 
     # properties
     @property
@@ -40,15 +40,15 @@ class DrawableNode(object):
 
     @walkable.setter
     def walkable(self, value):
-        white = (255, 255, 255)
+        blue = (0, 0, 255)
         red = (255, 0, 0)
         self._walkable = value
         # if it's set to walkable change to white
         # this will mark it as undirty
         if value:
-            self.color = (255, 255, 255)
+            self.color = (0, 0, 0)
         else:
-            self.color = (255, 0, 0)
+            self.color = (100, 0, 0)
 
     @property
     def f(self):
@@ -84,7 +84,7 @@ class DrawableNode(object):
     # manual setting of colors will mark them dirty so they will stay
     def color(self, value):
         white = (255, 255, 255)
-        red = (255, 0, 0)
+        red = (100, 0, 0)
 
         if value is red:
             self._color = value
@@ -114,9 +114,9 @@ class DrawableNode(object):
 
             # render the text
 
-            textf = font.render("F= " + str(self.f), True, (1, 1, 1))
+            textf = font.render("F= " + str(self.f), True, (255, 255, 255))
             textg = font.render("G= " + str(self.g) +
-                                "H= " + str(self.h), True, (1, 1, 1))
+                                "H= " + str(self.h), True, (255, 255, 255))
 
             # set it's position/parent
             textfpos = (self.x, self.y)  # top left
