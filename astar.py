@@ -16,8 +16,8 @@ GREEN = (0, 180, 0)
 RED = (100, 0, 100)
 REDRED = (255, 0, 0)
 PAD = (5, 5)
-ROWS = 10
-COLS = 10
+ROWS = 15
+COLS = 15
 WIDTH = 50
 HEIGHT = 50
 SCREEN_WIDTH = ROWS * (PAD[0] + WIDTH) + PAD[1]
@@ -72,7 +72,7 @@ font2 = pygame.font.Font(None, 28)
 
 # Set the destination and start point here
 start = NODES["[0, 0]"]
-dest = NODES["[9, 9]"]
+dest = NODES[str([ROWS-1,COLS-1])]
 selnode = NODES["[0, 0]"]
 
 # Define the astar function
@@ -91,7 +91,7 @@ def astar(startnode, destnode):
     current.h = abs((destnode.posx - current.posx)) + abs((destnode.posy - current.posy))
     current.f = current.h + current.g
 
-    while opnlist:
+    while opnlist and current != destnode:
         current = opnlist[0]
 
         #Add the current node to the closed list
@@ -100,13 +100,17 @@ def astar(startnode, destnode):
         #Go through adjacents and calculate G, H, F
         for adj in current.adjacents:
             if adj not in clslist and adj.walkable == True:
-                if adj not in opnlist: 
+                if adj not in opnlist:
                     opnlist.append(adj)
-                adj.parent = current
                 adj.g = 1
                 # Manhattan (absolute distance from current node to destination)
                 adj.h = abs((destnode.posx - adj.posx)) + abs((destnode.posy - adj.posy))
                 adj.f = adj.h + adj.g
+                if adj.parent:
+                    if adj.parent.f > current:
+                        adj.parent = current
+                else:
+                    adj.parent = current
 
         # Sort open list by value of f
         opnlist.sort(key=lambda n: n.f)
@@ -125,7 +129,6 @@ while not DONE:
     # All drawing code happens after the for loop and but
     # inside the main while DONE==False loop.
 
-        
     # Clear the SCREEN and set the SCREEN background
     SCREEN.fill(DARK)
 
@@ -188,6 +191,14 @@ while not DONE:
     if pygame.key.get_pressed()[pygame.K_c]:
         for noodles in NODES:
             NODES[noodles].walkable = True
+    if pygame.key.get_pressed()[pygame.K_x]:
+        for noodles in NODES:
+            if NODES[noodles].walkable == True:
+                if NODES[noodles] != start and NODES[noodles] != dest:
+                    NODES[noodles].walkable = False
+            else:
+                NODES[noodles].walkable = True
+            
 
     # Go ahead and update the SCREEN with what we've drawn.
     # This MUST happen after all the other drawing commands.
