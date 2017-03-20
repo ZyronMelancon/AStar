@@ -75,51 +75,22 @@ start = NODES["[0, 0]"]
 dest = NODES[str([ROWS-1,COLS-1])]
 selnode = NODES["[0, 0]"]
 
-# Define the astar function
-def astar(startnode, destnode):
-    opnlist = []
-    clslist = []
-    current = startnode
-    opnlist.append(current)
-    firstchoice = None
-    secondchoice = None
+currentNode = start
+opnlist = []
+clslist = []
 
-    finished = False
-    foundnode = False
+currentNode.g = 1
+currentNode.h = abs((dest.posx - currentNode.posx)) + abs((dest.posy - currentNode.posy))
+currentNode.f = currentNode.h + currentNode.g
 
-    current.g = 1
-    current.h = abs((destnode.posx - current.posx)) + abs((destnode.posy - current.posy))
-    current.f = current.h + current.g
-
-    while opnlist and current != destnode:
-        current = opnlist[0]
-
-        #Add the current node to the closed list
-        opnlist.remove(current)
-        clslist.append(current)
-        #Go through adjacents and calculate G, H, F
-        for adj in current.adjacents:
-            if adj not in clslist and adj.walkable == True:
-                if adj not in opnlist:
-                    opnlist.append(adj)
-                adj.g = 1 + current.g
-                # Manhattan (absolute distance from current node to destination)
-                adj.h = abs((destnode.posx - adj.posx)) + abs((destnode.posy - adj.posy))
-                adj.f = adj.h + adj.g
-                if adj.parent:
-                    continue
-                else:
-                    adj.parent = current
-
-        # Sort open list by value of f
-        opnlist.sort(key=lambda n: n.f)
+opnlist.append(currentNode)
 
 # Stop
 while not DONE:
 
     # This limits the while loop to a max of 10 times per second.
     # Leave this out and we will use all CPU we can.
-    CLOCK.tick(10)
+    CLOCK.tick(20)
 
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
@@ -139,17 +110,33 @@ while not DONE:
     pygame.draw.circle(SCREEN, GREEN, (start.screenpos[0] + 25, start.screenpos[1] + 25), 10)
     pygame.draw.circle(SCREEN, REDRED, (dest.screenpos[0] + 25, dest.screenpos[1] + 25), 10)
     pygame.draw.circle(SCREEN, WHITE, (selnode.screenpos[0] + 25, selnode.screenpos[1] + 25), 10)
-    
-
-    # Reset all node values
-    for noodles in NODES:
-        NODES[noodles].parent = None
-        NODES[noodles].h = 0
-        NODES[noodles].f = 0
-        NODES[noodles].g = 0
+    pygame.draw.circle(SCREEN, REDRED, (currentNode.screenpos[0] + 25, currentNode.screenpos[1] + 25), 10)
 
     # Do the A-Star thing if safe
-    if dest.walkable == True and start.walkable == True: astar(start, dest)
+    if dest.walkable == True and start.walkable == True:
+        if opnlist and currentNode != dest:
+            currentNode = opnlist[0]
+
+            #Add the current node to the closed list
+            opnlist.remove(currentNode)
+            clslist.append(currentNode)
+            #Go through adjacents and calculate G, H, F
+            for adj in currentNode.adjacents:
+                if adj not in clslist and adj.walkable == True:
+                    if adj not in opnlist:
+                        opnlist.append(adj)
+                    adj.g = 1
+                    # Manhattan (absolute distance from current node to destination)
+                    adj.h = abs((dest.posx - adj.posx)) + abs((dest.posy - adj.posy))
+                    adj.f = adj.h + adj.g
+                    if adj.parent:
+                        continue
+                    else:
+                        adj.parent = currentNode
+
+            # Sort open list by value of f
+            opnlist.sort(key=lambda n: n.f)
+
 
     # Draw guess lines
     for o in NODES:
@@ -179,9 +166,35 @@ while not DONE:
     # If pressed S, set start to selected
     if pygame.key.get_pressed()[pygame.K_s]:
         start = selnode
+        currentNode = start
+        opnlist = []
+        clslist = []
+        opnlist.append(currentNode)
+            # Reset all node values
+        for noodles in NODES:
+            NODES[noodles].parent = None
+            NODES[noodles].h = 0
+            NODES[noodles].f = 0
+            NODES[noodles].g = 0
+        currentNode.g = 1
+        currentNode.h = abs((dest.posx - currentNode.posx)) + abs((dest.posy - currentNode.posy))
+        currentNode.f = currentNode.h + currentNode.g
     # If pressed D, set destination to selected
     if pygame.key.get_pressed()[pygame.K_d]:
         dest = selnode
+        start = currentNode
+        opnlist = []
+        clslist = []
+        opnlist.append(currentNode)
+            # Reset all node values
+        for noodles in NODES:
+            NODES[noodles].parent = None
+            NODES[noodles].h = 0
+            NODES[noodles].f = 0
+            NODES[noodles].g = 0
+        currentNode.g = 1
+        currentNode.h = abs((dest.posx - currentNode.posx)) + abs((dest.posy - currentNode.posy))
+        currentNode.f = currentNode.h + currentNode.g
     # If pressed A, make selected walkable true/false
     if pygame.key.get_pressed()[pygame.K_a]:
          if selnode.walkable == True: selnode.walkable = False
