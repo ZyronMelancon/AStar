@@ -19,7 +19,7 @@ class DrawableNode(object):
         self._f = 0
 
         # drawing vars
-        SIZE = 50
+        SIZE = 30
         self.width = SIZE
         self.height = SIZE
         self.id = id
@@ -31,7 +31,7 @@ class DrawableNode(object):
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.surface = pygame.Surface((self.width, self.height))
         self.dirty = False
-        self._color =  (0, 0, 0)
+        self._color =  (15, 15, 15)
 
     # properties
     @property
@@ -46,7 +46,7 @@ class DrawableNode(object):
         # if it's set to walkable change to white
         # this will mark it as undirty
         if value:
-            self.color = (0, 0, 0)
+            self.color = (15, 15, 15)
         else:
             self.color = (100, 0, 0)
 
@@ -114,9 +114,9 @@ class DrawableNode(object):
 
             # render the text
 
-            textf = font.render("F= " + str(self.f), True, (255, 255, 255))
+            textf = font.render("F= " + str(self.f), True, (50, 50, 50))
             textg = font.render("G= " + str(self.g) +
-                                "H= " + str(self.h), True, (255, 255, 255))
+                                "H= " + str(self.h), True, (50, 50, 50))
 
             # set it's position/parent
             textfpos = (self.x, self.y)  # top left
